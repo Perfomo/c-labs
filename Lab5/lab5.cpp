@@ -26,7 +26,7 @@ struct Tree
 
 int NextLevel(Tree* root, int level_now)
 {
-    Tree* t = root, *stop;
+    Tree* t = root;
     int left = 0, right = 0;
     level_now++;
     if(t -> left)
@@ -50,6 +50,88 @@ int NextLevel(Tree* root, int level_now)
     }
     return right;
 }
+void PrintValue(Tree* root, int level_now)
+{
+    const int str_len = 72;
+    int left_num, right_num, rool = 72/(pow(2,level_now + 1)) + 5;
+    Tree* t = root;
+    for(int i = 0; i < rool; i++)
+    {
+        cout << " ";
+    }
+    if(t -> left)
+    {
+        t = t -> left;
+        cout << t -> key;
+    }
+    else
+    {
+        cout << "pop";
+    }
+    t = root;
+    for(int i = 0; i < rool; i++)
+    {
+        cout << "-";
+    }
+    if(t -> right)
+    {
+        t = t -> right;
+        cout << t -> key;
+    }
+    else
+    {
+        cout << "pop";
+    }
+    // for(int i = 0; i < rool/6; i++)
+    // {
+    //     cout << " ";
+    // }
+}
+
+int NextLevelPrint(Tree* root, int level_now, int level)
+{
+    int rool = 72/pow(2,level_now) + 4 ;
+    Tree* t = root;
+    level_now++;
+    if (level_now == level)
+    {
+        if (t -> left or t -> right)
+        {
+            PrintValue(t, level_now);
+        }
+        else
+        {
+            for(int i = 0; i < rool-1; i++)
+            {
+                cout << " ";
+            }
+            cout << "!" ;
+        }
+        return 1;
+    }
+    else
+    {
+        if(t -> left)
+        {
+            t = t -> left;
+            NextLevelPrint(t, level_now, level);
+            t = root;
+        }
+        else
+        {
+            for(int i = 0; i < rool-1; i++)
+            {
+                cout << " ";
+            }
+            cout << "!" ;
+        }
+        if(t -> right)
+        {
+            t = t -> right;
+            NextLevelPrint(t, level_now, level);
+        }
+    }
+}
 
 int GetLevel(Tree* root)
 {
@@ -72,6 +154,7 @@ int GetLevel(Tree* root)
     }
 }
 
+
 Tree *CreateTree()
 {
     int key;
@@ -86,6 +169,23 @@ Tree *CreateTree()
     root -> left = nullptr;
     root -> right = nullptr;
     return root;
+}
+
+void View(Tree* root)
+{
+    Tree* t = root;
+    int level = GetLevel(root);
+    cout << level << endl;
+    for (int i = 0; i < 35; i++)
+    {
+        cout << " ";
+    }
+    cout << root -> key << endl;
+    for(int i = 1; i <= level; i++)
+    {
+        NextLevelPrint(root, 0, i);
+        cout << endl;
+    }
 }
 
 void AddValues(Tree *root, int n)
@@ -158,8 +258,8 @@ int main()
             AddValues(root, n);
             break;
         case '3':
-            // cout << WhatLevel(root) << endl;
-            cout << lev(root) << endl;
+            // cout << GetLevel(root) << endl;
+            View(root);
         default:
             break;
         }

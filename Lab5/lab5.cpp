@@ -53,12 +53,8 @@ int NextLevel(Tree* root, int level_now)
 void PrintValue(Tree* root, int level_now)
 {
     const int str_len = 72;
-    int left_num, right_num, rool = 72/(pow(2,level_now + 1)) + 5;
+    int left_num, right_num, rool = 72/(pow(2,level_now + 0.5));
     Tree* t = root;
-    for(int i = 0; i < rool; i++)
-    {
-        cout << " ";
-    }
     if(t -> left)
     {
         t = t -> left;
@@ -66,7 +62,7 @@ void PrintValue(Tree* root, int level_now)
     }
     else
     {
-        cout << "pop";
+        cout << "N";
     }
     t = root;
     for(int i = 0; i < rool; i++)
@@ -80,17 +76,17 @@ void PrintValue(Tree* root, int level_now)
     }
     else
     {
-        cout << "pop";
+        cout << "N";
     }
-    // for(int i = 0; i < rool/6; i++)
+    // for(int i = 0; i < rool/2; i++)
     // {
-    //     cout << " ";
+    //     cout << "+";
     // }
 }
 
 int NextLevelPrint(Tree* root, int level_now, int level)
 {
-    int rool = 72/pow(2,level_now) + 4 ;
+    int rool = 72/(pow(2,level_now + 1));
     Tree* t = root;
     level_now++;
     if (level_now == level)
@@ -101,11 +97,13 @@ int NextLevelPrint(Tree* root, int level_now, int level)
         }
         else
         {
-            for(int i = 0; i < rool-1; i++)
+            PrintValue(t, level_now);
+            rool = 72/(pow(2,level_now + 0.55));
+            for(int i = 0; i < rool; i++)
             {
                 cout << " ";
             }
-            cout << "!" ;
+            cout << "*" ;
         }
         return 1;
     }
@@ -119,6 +117,7 @@ int NextLevelPrint(Tree* root, int level_now, int level)
         }
         else
         {
+            rool = 72/(pow(2,level_now - 0.25));
             for(int i = 0; i < rool-1; i++)
             {
                 cout << " ";
@@ -154,6 +153,109 @@ int GetLevel(Tree* root)
     }
 }
 
+string NextLevelPrintString(Tree* root, int level_now, int level)
+{
+    int line_here =  32 / pow(2,level + 1);
+    string left = "", right = "", add = "";
+    for (int i = 0; i < line_here; i++)
+    {
+        add += ' ';
+    }
+    if(level_now == level - 1 )
+    {
+        if (root -> left)
+        {
+            left = to_string(root -> left -> key);
+        }
+        else
+        {   
+            left = "N";
+        }
+        if (root -> right)
+        {
+            right = to_string(root -> right -> key);
+        }
+        else
+        {
+            right = "N";
+        }
+        add = left + add + right;
+        return add;
+    }
+    if (root -> left)
+    {
+        left = NextLevelPrintString(root -> left, level_now + 1, level);
+    }
+    else
+    {
+        for (int i = 0; i <   level - level_now ; i++)
+        {
+            left += add;
+        }
+    }
+    if (root -> right)
+    {
+        right = NextLevelPrintString(root -> right, level_now + 1, level);
+    }
+    else
+    {
+        for (int i = 0; i <   level - level_now; i++)
+        {
+            right += add;
+        }
+    }
+    add = left + add + right;
+    return add;
+}
+
+string GetLine(Tree* root, int level)
+{
+    int line_here = 32 / pow(2,level + 1);
+    string left = "", right = "", add = "";
+    for (int i = 0; i < line_here; i++)
+    {
+        add += ' ';
+    }
+    if (level == 1)
+    {
+        if (root -> left)
+        {
+            left = to_string(root -> left -> key);
+        }
+        else
+        {   
+            left = "N";
+        }
+        if (root -> right)
+        {
+            right = to_string(root -> right -> key);
+        }
+        else
+        {
+            right = "N";
+        }
+        add = left + add + right;
+        return add;
+    }
+    if (root -> left)
+    {
+        left = NextLevelPrintString(root -> left, 1, level);
+    }
+    else
+    {   
+        left = "N";
+    }
+    if (root -> right)
+    {
+        right = NextLevelPrintString(root -> right, 1, level);
+    }
+    else
+    {
+        right = "N";
+    }
+    add = left + add + right;
+    return add;
+}
 
 Tree *CreateTree()
 {
@@ -162,9 +264,9 @@ Tree *CreateTree()
     Tree *root = new Tree;
     cout << "Input key: " << endl;
     cin >> key;
-    cout << "Input info: " << endl;
-    cin >> info;
-    root->info = info;
+    // cout << "Input info: " << endl;
+    // cin >> info;
+    // root->info = info;
     root->key = key;
     root -> left = nullptr;
     root -> right = nullptr;
@@ -174,17 +276,25 @@ Tree *CreateTree()
 void View(Tree* root)
 {
     Tree* t = root;
-    int level = GetLevel(root);
+    int level = GetLevel(root), rool;
     cout << level << endl;
-    for (int i = 0; i < 35; i++)
+    for (int i = 0; i < 32; i++)
     {
-        cout << " ";
+        cout << "^";
     }
     cout << root -> key << endl;
+    
     for(int i = 1; i <= level; i++)
     {
-        NextLevelPrint(root, 0, i);
+        rool = 32/ pow(2, i) / 4 + 23;
+        for(int k = 0; k < rool; k++)
+        {
+            cout << "-";
+        }
+        // NextLevelPrint(root, 0, i);
+        cout << GetLine(root, i);
         cout << endl;
+        
     }
 }
 
@@ -195,8 +305,8 @@ void AddValues(Tree *root, int n)
     string info;
     cout << "Input key: " << endl;
     cin >> key;
-    cout << "Input info: " << endl;
-    cin >> info;
+    // cout << "Input info: " << endl;
+    // cin >> info;
     while(t)
     {
         if (t -> key == key)
@@ -220,7 +330,7 @@ void AddValues(Tree *root, int n)
         }
     }
     Tree *k = new Tree;
-    k -> info = info;
+    // k -> info = info;
     k -> key = key;
     if (key > o -> key)
     {

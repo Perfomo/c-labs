@@ -24,145 +24,26 @@ struct Tree
     Tree *left, *right;
 };
 
-int NextLevel(Tree* root, int level_now)
-{
-    Tree* t = root;
-    int left = 0, right = 0;
-    level_now++;
-    if(t -> left)
-    {
-        t = t -> left;
-        left = NextLevel(t, level_now);
-        t = root;
-    }
-    if(t -> right)
-    {
-        t = t -> right;
-        right = NextLevel(t, level_now);
-    }
-    if (left == 0 and right == 0)
-    {
-        return --level_now;
-    }
-    if(left > right)
-    {
-        return left;
-    }
-    return right;
-}
-void PrintValue(Tree* root, int level_now)
-{
-    const int str_len = 72;
-    int left_num, right_num, rool = 72/(pow(2,level_now + 0.5));
-    Tree* t = root;
-    if(t -> left)
-    {
-        t = t -> left;
-        cout << t -> key;
-    }
-    else
-    {
-        cout << "N";
-    }
-    t = root;
-    for(int i = 0; i < rool; i++)
-    {
-        cout << "-";
-    }
-    if(t -> right)
-    {
-        t = t -> right;
-        cout << t -> key;
-    }
-    else
-    {
-        cout << "N";
-    }
-    // for(int i = 0; i < rool/2; i++)
-    // {
-    //     cout << "+";
-    // }
-}
-
-int NextLevelPrint(Tree* root, int level_now, int level)
-{
-    int rool = 72/(pow(2,level_now + 1));
-    Tree* t = root;
-    level_now++;
-    if (level_now == level)
-    {
-        if (t -> left or t -> right)
-        {
-            PrintValue(t, level_now);
-        }
-        else
-        {
-            PrintValue(t, level_now);
-            rool = 72/(pow(2,level_now + 0.55));
-            for(int i = 0; i < rool; i++)
-            {
-                cout << " ";
-            }
-            cout << "*" ;
-        }
-        return 1;
-    }
-    else
-    {
-        if(t -> left)
-        {
-            t = t -> left;
-            NextLevelPrint(t, level_now, level);
-            t = root;
-        }
-        else
-        {
-            rool = 72/(pow(2,level_now - 0.25));
-            for(int i = 0; i < rool-1; i++)
-            {
-                cout << " ";
-            }
-            cout << "!" ;
-        }
-        if(t -> right)
-        {
-            t = t -> right;
-            NextLevelPrint(t, level_now, level);
-        }
-    }
-}
-
 int GetLevel(Tree* root)
 {
-    int left = 0, right = 0;
-    if (root -> left)
+    if(!root)
     {
-        left = NextLevel(root -> left, 1);
+        return 0;
     }
-    if (root -> right)
-    {
-        right = NextLevel(root -> right, 1);
-    }
-    if (left > right)
-    {
-        return left;
-    }
-    else
-    {
-        return right;
-    }
+    return max(GetLevel(root -> left), GetLevel(root -> right)) + 1;
 }
 
 string NextLevelPrintString(Tree* root, int level_now, int level)
 {
-    int line_here =  32 / pow(2,level + 1);
+    int line_here =  70 / pow(2 , level), delt = level - level_now ;
     string left = "", right = "", add = "";
-    for (int i = 0; i < line_here; i++)
-    {
-        add += ' ';
-    }
+    
     if(level_now == level - 1 )
     {
+        for (int i = 0; i < line_here; i++)
+        {
+            add += '-';
+        }
         if (root -> left)
         {
             left = to_string(root -> left -> key);
@@ -181,6 +62,14 @@ string NextLevelPrintString(Tree* root, int level_now, int level)
         }
         add = left + add + right;
         return add;
+    }
+    for (int i = 0; i < line_here - 2; i++)
+    {
+        add += ' ';
+    } 
+    if (delt % 2 != 0)
+    {
+        delt+=5;
     }
     if (root -> left)
     {
@@ -188,10 +77,11 @@ string NextLevelPrintString(Tree* root, int level_now, int level)
     }
     else
     {
-        for (int i = 0; i <   level - level_now ; i++)
+        for (int i = 0; i <=  delt - 1; i++)
         {
             left += add;
         }
+        left += ' ';
     }
     if (root -> right)
     {
@@ -199,10 +89,11 @@ string NextLevelPrintString(Tree* root, int level_now, int level)
     }
     else
     {
-        for (int i = 0; i <   level - level_now; i++)
+        for (int i = 0; i <  delt - 1; i++)
         {
             right += add;
         }
+        right += ' ';
     }
     add = left + add + right;
     return add;
@@ -210,14 +101,15 @@ string NextLevelPrintString(Tree* root, int level_now, int level)
 
 string GetLine(Tree* root, int level)
 {
-    int line_here = 32 / pow(2,level + 1);
+    int line_here = 70 / pow(2, level);
     string left = "", right = "", add = "";
-    for (int i = 0; i < line_here; i++)
-    {
-        add += ' ';
-    }
+    
     if (level == 1)
     {
+        for (int i = 0; i < line_here; i++)
+        {
+            add += '-';
+        }
         if (root -> left)
         {
             left = to_string(root -> left -> key);
@@ -236,6 +128,10 @@ string GetLine(Tree* root, int level)
         }
         add = left + add + right;
         return add;
+    }
+    for (int i = 0; i < line_here; i++)
+    {
+        add += ' ';
     }
     if (root -> left)
     {
@@ -276,20 +172,20 @@ Tree *CreateTree()
 void View(Tree* root)
 {
     Tree* t = root;
-    int level = GetLevel(root), rool;
+    int level = GetLevel(root), rool = 35;
     cout << level << endl;
-    for (int i = 0; i < 32; i++)
+    for (int i = 0; i < 35; i++)
     {
-        cout << "^";
+        cout << " ";
     }
     cout << root -> key << endl;
     
     for(int i = 1; i <= level; i++)
     {
-        rool = 32/ pow(2, i) / 4 + 23;
+        rool = rool / 2 + 1;
         for(int k = 0; k < rool; k++)
         {
-            cout << "-";
+            cout << " ";
         }
         // NextLevelPrint(root, 0, i);
         cout << GetLine(root, i);

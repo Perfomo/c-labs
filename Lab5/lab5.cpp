@@ -33,6 +33,33 @@ int GetLevel(Tree* root)
     return max(GetLevel(root -> left), GetLevel(root -> right)) + 1;
 }
 
+
+
+string GetInfo(Tree* root, int key)
+{
+    if(key == root -> key)
+    {
+        return root -> info;
+    }
+    if (key > root -> key)
+    {
+        if (root -> right)
+        {
+            return GetInfo(root -> right, key);
+        }
+        return "No element with this key...";
+    }
+    else
+    {
+        if (root -> left)
+        {
+            return GetInfo(root -> left, key);
+        }
+        return "No element with this key...";
+    }
+    return "exit with error...";
+}
+
 string NextLevelPrintString(Tree* root, int level_now, int level)
 {
     int line_here =  70 / pow(2 , level), delt = level - level_now ;
@@ -160,9 +187,9 @@ Tree *CreateTree()
     Tree *root = new Tree;
     cout << "Input key: " << endl;
     cin >> key;
-    // cout << "Input info: " << endl;
-    // cin >> info;
-    // root->info = info;
+    cout << "Input info: " << endl;
+    cin >> info;
+    root->info = info;
     root->key = key;
     root -> left = nullptr;
     root -> right = nullptr;
@@ -201,8 +228,8 @@ void AddValues(Tree *root, int n)
     string info;
     cout << "Input key: " << endl;
     cin >> key;
-    // cout << "Input info: " << endl;
-    // cin >> info;
+    cout << "Input info: " << endl;
+    cin >> info;
     while(t)
     {
         if (t -> key == key)
@@ -226,7 +253,7 @@ void AddValues(Tree *root, int n)
         }
     }
     Tree *k = new Tree;
-    // k -> info = info;
+    k -> info = info;
     k -> key = key;
     if (key > o -> key)
     {
@@ -247,10 +274,12 @@ int main()
 {
     Tree *root = nullptr;
     bool exit = false;
+    int find_key;
     while (!exit)
     {
         int n = 0;
-        cout << "1 - Input values\n2 - Delete element\n3 - View tree" << endl;
+        cou
+        cout << "1 - Input values\n2 - Delete element\n3 - View tree\n4 - find info" << endl;
         switch (_getch())
         {
         case '1':
@@ -262,13 +291,20 @@ int main()
                 n--;
             }
             AddValues(root, n);
+            cin.ignore();
             break;
         case '3':
             // cout << GetLevel(root) << endl;
             View(root);
+            break;
+        case '4':
+            cout << "Input key: " << endl;
+            cin >> find_key;
+            cout << GetInfo(root, find_key) << endl;
+            cin.ignore();
+            break;
         default:
             break;
         }
-        cin.ignore();
     }
 }

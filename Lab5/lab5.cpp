@@ -33,7 +33,80 @@ int GetLevel(Tree* root)
     return max(GetLevel(root -> left), GetLevel(root -> right)) + 1;
 }
 
+void DeleteAll(Tree* root)
+{
+    if(root)
+    {
+        DeleteAll(root -> left);
+        DeleteAll(root -> right);
+        delete root;
+    }
+}
 
+Tree* RecDelByKey(Tree* root, int key)
+{
+    Tree* del, *k;
+    int key_ ;
+    string str_;
+    if(key > root -> key)
+    {
+        if (root -> right)
+        {
+            del = RecDelByKey(root -> right, key);
+            root -> right = del;    
+        }
+        else 
+        {
+            cout << "Can't find this number on your tree..." << endl;
+        }
+        return root;
+    }
+    if(key < root -> key)
+    {
+        if (root -> left)
+        {
+            del = RecDelByKey(root -> left, key);
+            root -> left = del;
+        }
+        else
+        {
+            cout << "Can't find this number on your tree..." << endl;
+        }
+        return root;
+    }
+    else
+    {
+        if(root -> left and root -> right)
+        {
+            del = root -> right;
+            while (del -> left)
+            {
+                del = del -> left;
+            }
+            str_ = del -> info;
+            key_ = del -> key;
+            k = RecDelByKey(root, del -> key);
+            root -> key = key_;
+            root -> info = str_;
+            return root;
+
+        }
+        if (root -> left)
+        {
+            del = root -> left;
+            delete root;
+            return del;
+        }
+        if (root -> right)
+        {
+            del = root -> right;
+            delete root;
+            return del;
+        }
+        delete root;
+        return nullptr;
+    }
+}
 
 string GetInfo(Tree* root, int key)
 {
@@ -59,6 +132,7 @@ string GetInfo(Tree* root, int key)
     }
     return "exit with error...";
 }
+
 
 string NextLevelPrintString(Tree* root, int level_now, int level)
 {
@@ -224,6 +298,7 @@ void View(Tree* root)
 void AddValues(Tree *root, int n)
 {
     Tree *t = root, *o;
+    Tree *k = new Tree;
     int key;
     string info;
     cout << "Input key: " << endl;
@@ -237,6 +312,8 @@ void AddValues(Tree *root, int n)
             cout << "Bad key..." << endl;
             cout << "Input key: " << endl;
             cin >> key;
+            t = root;
+            cin.ignore();
         }
         else
         {
@@ -249,20 +326,21 @@ void AddValues(Tree *root, int n)
             {
                 o = t;
                 t = t -> left; 
-            } 
+            }
         }
     }
-    Tree *k = new Tree;
-    k -> info = info;
-    k -> key = key;
-    if (key > o -> key)
-    {
-        o -> right = k;
+    if( key > o -> key)
+    { 
+        o -> right = k; 
     }
     else
     {
-        o -> left = k;
+        o -> left = k; 
     }
+    k -> info = info;
+    k -> key = key;
+    k -> left = nullptr;
+    k -> right = nullptr;
     n--;
     if (n != 0)
     {
@@ -278,8 +356,7 @@ int main()
     while (!exit)
     {
         int n = 0;
-        cou
-        cout << "1 - Input values\n2 - Delete element\n3 - View tree\n4 - find info" << endl;
+        cout << "1 - Input values\n2 - Delete\n3 - View tree\n4 - Find info" << endl;
         switch (_getch())
         {
         case '1':
@@ -290,19 +367,52 @@ int main()
                 root = CreateTree();
                 n--;
             }
-            AddValues(root, n);
+            if (n > 0)
+            {
+                AddValues(root, n);
+            }
             cin.ignore();
             break;
-        case '3':
-            // cout << GetLevel(root) << endl;
-            View(root);
+
+        case '2':
+            cout << "1 - Delete all\nelse - Delete by key" << endl;
+            if(_getch() == '1')
+            {
+                DeleteAll(root);
+                root = nullptr;
+            }
+            else
+            {
+                if (root)
+                {
+                    cout << "Input key: " << endl;
+                    cin >> find_key;
+                    root = RecDelByKey(root, find_key);
+                }
+                else
+                {
+                    cout << "Tree is empty!!!" << endl;
+                }
+            }
             break;
+        case '3':
+            if (root)
+            {
+                View(root);
+            }
+            else
+            {
+                cout << "Tree is empty!!!" << endl;
+            }
+            break;
+
         case '4':
             cout << "Input key: " << endl;
             cin >> find_key;
             cout << GetInfo(root, find_key) << endl;
             cin.ignore();
             break;
+
         default:
             break;
         }

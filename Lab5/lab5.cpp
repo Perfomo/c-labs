@@ -24,6 +24,64 @@ struct Tree
     Tree *left, *right;
 };
 
+void BalanceTree(Tree*& root,int level, int n, Tree** arr)
+{
+    if (n == level)
+    { 
+        *&root = nullptr;
+        return;
+    }
+        else {
+                int m = (n + level) / 2;
+                root = arr[m];
+                
+                BalanceTree( *&root -> left, level, m, arr);
+                BalanceTree( *&root -> right, m+1, n, arr);
+        }
+
+}
+
+int Go2(Tree* root, Tree **&arr, int n)
+{
+    if(!root)
+    {
+        return --n;
+    }
+    else
+    {
+        cout << root -> key << " ";
+        arr[n] = root;
+        n = Go2(root -> left, arr, ++n);
+        n = Go2(root -> right, arr, ++n);
+        return n;
+    }
+}
+
+Tree** SortArr(Tree **arr, int n)
+{
+    Tree* buf;
+    bool exit = false;
+    for(int i = 1; i < n; i++)
+    {
+        for(int k = n - 1; k != i - 1; k--)
+        {
+            if(arr[k] -> key < arr[k - 1] -> key)
+            {
+                buf = arr[k - 1];
+                arr[k - 1] = arr[k];
+                arr[k] = buf;
+                exit = false;
+            }
+        }
+        if (exit)
+        {
+            return arr;
+        }
+        exit = true;
+    }
+    return arr;
+}
+
 int GetLevel(Tree* root)
 {
     if(!root)
@@ -352,16 +410,19 @@ int main()
 {
     Tree *root = nullptr;
     bool exit = false;
-    int find_key;
+    int find_key, ammount_keys = 0;
     while (!exit)
     {
         int n = 0;
-        cout << "1 - Input values\n2 - Delete\n3 - View tree\n4 - Find info" << endl;
+        cout << "---------------------------" << endl;
+        cout << "1 - Input values\n2 - Delete\n3 - View tree\n4 - Find info\n5 - Balance tree" << endl;
+        cout << "---------------------------" << endl;
         switch (_getch())
         {
         case '1':
             cout << "How many values u want to add?" << endl;
             cin >> n;
+            ammount_keys += n;
             if (!root)
             {
                 root = CreateTree();
@@ -380,6 +441,7 @@ int main()
             {
                 DeleteAll(root);
                 root = nullptr;
+                ammount_keys = 0;
             }
             else
             {
@@ -388,13 +450,16 @@ int main()
                     cout << "Input key: " << endl;
                     cin >> find_key;
                     root = RecDelByKey(root, find_key);
+                    ammount_keys--;
                 }
                 else
                 {
                     cout << "Tree is empty!!!" << endl;
                 }
             }
+            cin.ignore();
             break;
+
         case '3':
             if (root)
             {
@@ -411,6 +476,22 @@ int main()
             cin >> find_key;
             cout << GetInfo(root, find_key) << endl;
             cin.ignore();
+            break;
+
+        case '5':
+            if (root)
+            {
+                Tree **arr = new Tree*[ammount_keys];
+                Go2(root, *&arr, 0);
+                cout << endl;
+                arr = SortArr(arr, ammount_keys);
+                BalanceTree(*&root, 0, ammount_keys, arr);
+                View(root);
+            }
+            else
+            {
+                cout << "Tree is empty!!!" << endl;
+            }
             break;
 
         default:

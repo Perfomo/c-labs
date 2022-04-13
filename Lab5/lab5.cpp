@@ -24,6 +24,52 @@ struct Tree
     Tree *left, *right;
 };
 
+void GoWay1(Tree* root)
+{
+    if(root)
+    {
+        GoWay1(root -> left);
+        cout << root -> key << " ";
+        GoWay1(root -> right);
+    }
+}
+
+void GoWay2(Tree* root)
+{
+    if(root)
+    {
+        cout << root -> key << " ";
+        GoWay2(root -> left);
+        GoWay2(root -> right);
+    }
+}
+
+void GoWay3(Tree* root)
+{
+    if(root)
+    {
+        GoWay3(root -> left);
+        GoWay3(root -> right);
+        cout << root -> key << " ";
+    }
+}
+
+int Go2int(Tree* root, int *&arr, int n)
+{
+    if(!root)
+    {
+        return --n;
+    }
+    else
+    {
+        cout << root -> key << " ";
+        arr[n] = root -> key;
+        n = Go2int(root -> left, arr, ++n);
+        n = Go2int(root -> right, arr, ++n);
+        return n;
+    }
+}
+
 void BalanceTree(Tree*& root,int level, int n, Tree** arr)
 {
     if (n == level)
@@ -191,6 +237,120 @@ string GetInfo(Tree* root, int key)
     return "exit with error...";
 }
 
+string GiveSpace(int level_now, int level)
+{
+    int line_here =  70 / pow(2 , level), del = level - level_now;
+    string add = "", res = "";
+    for (int i = 0; i < line_here; i++)
+    {
+        add += ' ';
+    }
+    add += ' ';
+    if(del > 2)
+    {
+        del += del - 2;
+    }
+    for (int i = 1; i < del; i++)
+    {
+        res += add;
+    }
+    return res;
+}
+
+string PrintTree(Tree* root, int level_now, int level)
+{
+    int line_here =  70 / pow(2 , level), delt = level - level_now ;
+    string left = "", right = "", add = "", res = "";
+
+    if(delt == 0)
+    {
+        return to_string(root -> key);
+    }
+    else
+    {
+        if(delt > 1 and (!root -> left and !root -> right))
+        {
+            for (int i = 0; i < line_here - 1; i++)
+            {
+                add += ' ';
+            }
+            // for(int k = 0; k < level; k++)
+            // {
+            //     res += add;
+            // }
+            left = GiveSpace(level_now, level);
+            right = GiveSpace(level_now, level);
+            return left + add + right;
+        }
+        if(root -> left)
+        {
+            left = PrintTree(root -> left, level_now + 1, level);
+        }
+        else
+        {
+            if(delt > 1)
+            {
+                left = GiveSpace(level_now, level);
+            }
+            else
+            {
+                left = 'N';
+            }
+        }
+        if(root -> right)
+        {
+            right = PrintTree(root -> right, level_now + 1, level);
+        }
+        else
+        {
+            if(delt > 1)
+            {
+                right = GiveSpace(level_now, level);
+            }
+            else
+            {
+                right = 'N';
+            }
+        }
+        add = "";
+        if(delt > 1)
+        {
+            if (level >= 5)
+            {
+                line_here += pow(2,(level - 4));
+            }
+            for (int i = 0; i < line_here  + 1; i++)
+            {
+                add += ' ';
+            }
+        }
+        else
+        {
+            for (int i = 0; i < line_here - 1; i++)
+            {
+                add += '-';
+            }
+        }
+        return left + add + right;
+    }
+
+}
+
+void ViewTree(Tree* root)
+{
+    int preLine = 68, level = GetLevel(root);
+
+    for(int i = 0; i <= level; i++)
+    {
+        preLine = preLine / 2 + 1;
+        for(int k = 0; k < preLine; k++)
+        {
+            cout << " ";
+        }
+        cout << PrintTree(root, 0, i);
+        cout << endl;
+    }
+}
 
 string NextLevelPrintString(Tree* root, int level_now, int level)
 {
@@ -312,6 +472,20 @@ string GetLine(Tree* root, int level)
     return add;
 }
 
+void ViewHor (Tree *root,  int level)
+{
+    if (root)
+    {
+        ViewHor( root -> right , level + 1);  
+        for (int i = 0; i < level; ++i ) 
+        {
+            cout << "    ";
+        }
+        cout << root -> key << endl;
+        ViewHor( root -> left , level + 1);   
+    }
+}
+
 Tree *CreateTree()
 {
     int key;
@@ -332,7 +506,6 @@ void View(Tree* root)
 {
     Tree* t = root;
     int level = GetLevel(root), rool = 35;
-    cout << level << endl;
     for (int i = 0; i < 35; i++)
     {
         cout << " ";
@@ -346,7 +519,6 @@ void View(Tree* root)
         {
             cout << " ";
         }
-        // NextLevelPrint(root, 0, i);
         cout << GetLine(root, i);
         cout << endl;
         
@@ -406,23 +578,47 @@ void AddValues(Tree *root, int n)
     }    
 }
 
+Tree** WorkMemTree(Tree** arr, int new_mem, int last_mem)
+{
+    Tree* *buf = new Tree*[new_mem];
+    for (int i = 0; i < last_mem; i++)
+    {
+        buf[i] = arr[i];
+        arr[i] = nullptr;
+        delete arr[i];
+    }
+    delete[] arr;
+    return buf;
+}
+int* WorkMemint(int* arr, int new_mem, int last_mem)
+{
+    int *buf = new int[new_mem];
+    for (int i = 0; i < last_mem; i++)
+    {
+        buf[i] = arr[i];
+    }
+    delete[] arr;
+    return buf;
+}
+
 int main()
 {
-    Tree *root = nullptr;
+    Tree *root = nullptr, **arr;
     bool exit = false;
-    int find_key, ammount_keys = 0;
+    double ave = 0;
+    int find_key, amount_keys = 0, n13_res = 0, *arr_i = nullptr, last_mem = 0, level;
     while (!exit)
     {
         int n = 0;
         cout << "---------------------------" << endl;
-        cout << "1 - Input values\n2 - Delete\n3 - View tree\n4 - Find info\n5 - Balance tree" << endl;
+        cout << "1 - Input values\n2 - Delete\n3 - View tree\n4 - Find info\n5 - Balance tree\n6 - n13 " << endl;
         cout << "---------------------------" << endl;
         switch (_getch())
         {
         case '1':
             cout << "How many values u want to add?" << endl;
             cin >> n;
-            ammount_keys += n;
+            amount_keys += n;
             if (!root)
             {
                 root = CreateTree();
@@ -441,7 +637,7 @@ int main()
             {
                 DeleteAll(root);
                 root = nullptr;
-                ammount_keys = 0;
+                amount_keys = 0;
             }
             else
             {
@@ -450,20 +646,44 @@ int main()
                     cout << "Input key: " << endl;
                     cin >> find_key;
                     root = RecDelByKey(root, find_key);
-                    ammount_keys--;
+                    amount_keys--;
+                    cin.ignore();
                 }
                 else
                 {
                     cout << "Tree is empty!!!" << endl;
                 }
             }
-            cin.ignore();
             break;
 
         case '3':
             if (root)
             {
-                View(root);
+                level = GetLevel(root);
+                cout << "=======================" << endl;
+                cout << "1 - Vertical tree\nelse - Horizontal tree\n";
+                if ((_getch() == '1'))
+                {
+                    cout << "Ur level tree is: " << level << endl;
+                    cout << "Func 1:\n";
+                    View(root);
+                    cout << "Func 2:\n";
+                    ViewTree(root);
+                }
+                else
+                {
+                    cout << "Ur level tree is: " << level << endl;
+                    ViewHor(root, level);
+                }
+                cout << "\nLeft-Root-Right: ";
+                GoWay1(root);
+                cout << endl;
+                cout << "Root-Left-Right: ";
+                GoWay2(root);
+                cout << endl;
+                cout << "Left-Right-Root: ";
+                GoWay3(root);
+                cout << endl;
             }
             else
             {
@@ -472,21 +692,12 @@ int main()
             break;
 
         case '4':
-            cout << "Input key: " << endl;
-            cin >> find_key;
-            cout << GetInfo(root, find_key) << endl;
-            cin.ignore();
-            break;
-
-        case '5':
-            if (root)
+            if(root)
             {
-                Tree **arr = new Tree*[ammount_keys];
-                Go2(root, *&arr, 0);
-                cout << endl;
-                arr = SortArr(arr, ammount_keys);
-                BalanceTree(*&root, 0, ammount_keys, arr);
-                View(root);
+                cout << "Input key: " << endl;
+                cin >> find_key;
+                cout << GetInfo(root, find_key) << endl;
+                cin.ignore();
             }
             else
             {
@@ -494,6 +705,69 @@ int main()
             }
             break;
 
+        case '5':
+            if (root)
+            {
+                if(last_mem == 0)
+                {
+                    arr = new Tree*[amount_keys];
+                    arr_i = new int[amount_keys];
+                    last_mem = amount_keys;
+                }
+                if(amount_keys > last_mem)
+                {
+                    arr = WorkMemTree(arr, amount_keys, last_mem);
+                }
+                Go2(root, *&arr, 0);
+                cout << endl;
+                arr = SortArr(arr, amount_keys);
+                BalanceTree(*&root, 0, amount_keys, arr);
+                last_mem = amount_keys;
+            }
+            else
+            {
+                cout << "Tree is empty!!!" << endl;
+            }
+            break;
+
+        case '6':
+            if(root)
+            {
+                if(last_mem == 0)
+                {
+                    arr_i = new int[amount_keys];
+                    arr = new Tree*[amount_keys];
+                    last_mem = amount_keys;
+                }
+                if(amount_keys > last_mem)
+                {
+                    arr_i = WorkMemint(arr_i, amount_keys, last_mem);
+                }
+                Go2int(root, *&arr_i, 0);
+                cout << endl;
+                for(int i = 0; i < amount_keys; i++)
+                {
+                    ave += arr_i[i];
+                }
+                ave /= (double)amount_keys;
+                cout << "Ave is: "  << ave << endl;
+                n13_res = arr_i[0];
+                for(int i = 0; i < amount_keys; i++)
+                {
+                    if (abs(abs(arr_i[i]) - ave) < abs(abs(n13_res) - ave) )
+                    {
+                        n13_res = arr_i[i];
+                    }
+                }
+                cout << "Ur result: " << n13_res << endl;
+                ave = n13_res = 0;
+            }
+            else
+            {
+                cout << "Tree is empty!!!" << endl;
+            }
+            break;
+        
         default:
             break;
         }

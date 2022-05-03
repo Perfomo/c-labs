@@ -1,22 +1,8 @@
 using namespace std;
 #include <iostream>
 #include <math.h>
+#include "Source1.h"
 
-#include <termios.h>
-#include <unistd.h>
-int _getch(void)
-{
-	struct termios oldattr, newattr;
-	int ch;
-
-	tcgetattr(STDIN_FILENO, &oldattr);
-	newattr = oldattr;
-	newattr.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
-	return ch;
-}
 //Sin^2(x) + 3Cos(x)
 
 string str_n(double x)
@@ -89,12 +75,16 @@ int main()
 {
     double a, b, h, h1, *arr_x, *arr_y, *arr_y_l, *arr_y_n, x, y;
     int m, n;
+    bool input = false;
     while (true)
     {
+        cout << "---------------------------" << endl;
         cout << "1 - Input values\n2 - result\n3 - Exit" << endl;
         switch (_getch())
         {
         case '1':
+            input = true;
+            cout << "---------------------------" << endl;
             cout << "1 - Test\nelse - Your input" << endl;
             if(_getch() == '1')
             {
@@ -105,44 +95,27 @@ int main()
             }
             else
             {
-                while (true)
-                {
-                    cout << "Input a (not more than 5 char after and before dot) " << endl;
-                    cin >> a;
-                    cout << to_string(a).length() + 1 << endl;
-                    if (to_string(a).length() < 13)
-                    {
-                        break;
-                    }
-                    cout << "Length of number is too big..." << endl;
-                }
-                while (true)
-                {
-                    cout << "Input b (not more than 5 char after and before dot): " << endl;
-                    cin >> b;
-                    if (to_string(b).length() < 13)
-                    {
-                        break;
-                    }
-                    cout << "Length of number is too big..." << endl;
-                }
-                
-
+                cout << "Input a (pls length no more than 12): " << endl;
+                a = InputDouble("all");
+            
+                cout << "Input b (pls length no more than 12): " << endl;
+                b = InputDouble("all");
+               
                 if(a > b)
                 {
                     cout << "Swaping a and b..." << endl;
                     h = a;
                     a = b;
-                    b = a;
+                    b = h;
                 }
                 
                 while (true)
                 {
                     cout << "Input m: " << endl;
-                    cin >> m;
+                    m = InputDouble("all");
 
                     cout << "Input n: " << endl;
-                    cin >> n;
+                    n = InputDouble("all");
                     
                     if(n > m)
                     {
@@ -158,47 +131,53 @@ int main()
             break;
 
         case '2':
-            
-            arr_x = new double[m + 1];
-            arr_y = new double[m + 1];
-            x = a;
-            cout << "\nBefore: " << endl;
-            cout << "---------------------------" << endl;
-            cout << "|x           |y           |" << endl;
-            for(int i = 0; i < m; i++)
+            if(input)
             {
-                arr_x[i] = x;
-                arr_y[i] = F(x);
-                system(("echo '" + to_string(x) + " " + to_string(arr_y[i]) + "' >> points_before").c_str());
-                cout << "|" << str_n(x) << "|" << str_n(arr_y[i]) << "|" << endl;
-                x += h;
-            }
-            cout << "---------------------------" << endl;
-            cout << endl;
+                arr_x = new double[m + 1];
+                arr_y = new double[m + 1];
+                x = a;
+                cout << "\nBefore: " << endl;
+                cout << "---------------------------" << endl;
+                cout << "|x           |y           |" << endl;
+                for(int i = 0; i < m; i++)
+                {
+                    arr_x[i] = x;
+                    arr_y[i] = F(x);
+                    system(("echo '" + to_string(x) + " " + to_string(arr_y[i]) + "' >> points_before").c_str());
+                    cout << "|" << str_n(x) << "|" << str_n(arr_y[i]) << "|" << endl;
+                    x += h;
+                }
+                cout << "---------------------------" << endl;
+                cout << endl;
 
-            x = a;
-            arr_y_l = new double[n + 1];
-            arr_y_n = new double[n + 1];
-            cout << "\nAfter: " << endl;
-            cout << "----------------------------------------" << endl;
-            cout << "|x           |y - Lagr    |y - Newt    |" << endl;
-            for(int i = 0; i < n; i++, x += h1)
-            {   
-                arr_y_l[i] = Lagr(arr_x, x, m, arr_y);
-                arr_y_n[i] = Newton(x, m, arr_x, arr_y);
-                cout << "|" << str_n(x) << "|" << str_n(arr_y_l[i]) << "|" << str_n(arr_y_n[i]) << "|" << endl;
-                system(("echo '" + to_string(x) + " " + to_string(arr_y_l[i]) + "' >> points_after_l").c_str());
-                system(("echo '" + to_string(x) + " " + to_string(arr_y_n[i]) + "' >> points_after_n").c_str());
+                x = a;
+                arr_y_l = new double[n + 1];
+                arr_y_n = new double[n + 1];
+                cout << "\nAfter: " << endl;
+                cout << "----------------------------------------" << endl;
+                cout << "|x           |y - Lagr    |y - Newt    |" << endl;
+                for(int i = 0; i < n; i++, x += h1)
+                {   
+                    arr_y_l[i] = Lagr(arr_x, x, m, arr_y);
+                    arr_y_n[i] = Newton(x, m, arr_x, arr_y);
+                    cout << "|" << str_n(x) << "|" << str_n(arr_y_l[i]) << "|" << str_n(arr_y_n[i]) << "|" << endl;
+                    system(("echo '" + to_string(x) + " " + to_string(arr_y_l[i]) + "' >> points_after_l").c_str());
+                    system(("echo '" + to_string(x) + " " + to_string(arr_y_n[i]) + "' >> points_after_n").c_str());
+                }
+                cout << "----------------------------------------" << endl;
+                system("echo 'plot \"points_after_l\" with lines, \"points_before\"  with lines, \"points_after_n\" ' | gnuplot --persist ");
+                system("rm 'points_after_l'");
+                system("rm 'points_after_n'");
+                system("rm 'points_before'");
+                delete[] arr_x;
+                delete[] arr_y;
+                delete[] arr_y_l;
+                delete[] arr_y_n;
             }
-            cout << "----------------------------------------" << endl;
-            system("echo 'plot \"points_after_l\" with lines, \"points_before\"  with lines, \"points_after_n\" ' | gnuplot --persist ");
-            system("rm 'points_after_l'");
-            system("rm 'points_after_n'");
-            system("rm 'points_before'");
-            delete[] arr_x;
-            delete[] arr_y;
-            delete[] arr_y_l;
-            delete[] arr_y_n;
+            else
+            {
+                cout << "Input at first!!!" << endl;
+            }
             break;
 
         case '3':

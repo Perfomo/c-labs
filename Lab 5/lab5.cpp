@@ -751,7 +751,7 @@ int main()
             break;
 
         case '7':
-            cout << "Habe a nice day!"<< endl;
+            cout << "Have a nice day!"<< endl;
             exit = true;
             // All mem will be cleared after program's end.
             break;

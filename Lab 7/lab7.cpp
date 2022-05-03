@@ -105,11 +105,28 @@ int main()
             }
             else
             {
-                cout << "Input a: " << endl;
-                cin >> a;
-
-                cout << "Input b: " << endl;
-                cin >> b;
+                while (true)
+                {
+                    cout << "Input a (not more than 5 char after and before dot) " << endl;
+                    cin >> a;
+                    cout << to_string(a).length() + 1 << endl;
+                    if (to_string(a).length() < 13)
+                    {
+                        break;
+                    }
+                    cout << "Length of number is too big..." << endl;
+                }
+                while (true)
+                {
+                    cout << "Input b (not more than 5 char after and before dot): " << endl;
+                    cin >> b;
+                    if (to_string(b).length() < 13)
+                    {
+                        break;
+                    }
+                    cout << "Length of number is too big..." << endl;
+                }
+                
 
                 if(a > b)
                 {

@@ -56,7 +56,7 @@ double Fun_Del_2(double x0, double x1, double e, int &it)
 
 int main()
 {
-    bool exit = false;
+    bool exit = false, input = false;
     double a = -7, b = 3, h = 0.001, e = 0.005, y;
     int it;
 
@@ -68,6 +68,7 @@ int main()
         switch (_getch())
         {
         case '1':
+            input = true;
             cout << "1 - Test\nelse - Ur input" << endl;
             if (_getch() == '1')
             {
@@ -135,7 +136,7 @@ int main()
             break;
 
         case '2':
-            if (a == b)
+            if (!input)
             {
                 cout << "At first do input!!!" << endl;
             }
@@ -165,15 +166,22 @@ int main()
             break;
 
         case '3':
-            for(double k = a, y = (b - a) / 100; k < b; k+=y)
+            if(input)
             {
-                system(("echo '" + to_string(k) + " " + to_string(F(k)) + "' >> points").c_str());
+                for(double k = a, y = (b - a) / 100; k < b; k+=y)
+                {
+                    system(("echo '" + to_string(k) + " " + to_string(F(k)) + "' >> points").c_str());
+                }
+                system("echo 'plot \"points\" with lines, 0' | gnuplot --persist ");
+                system("rm 'points'");
+                // View1(a, b, h);
+                // cout << "-------------------------------------------------------------------------------------------" << endl;
+                // View2(a, b, h);
             }
-            system("echo 'plot \"points\" with lines, 0' | gnuplot --persist ");
-            system("rm 'points'");
-            // View1(a, b, h);
-            // cout << "-------------------------------------------------------------------------------------------" << endl;
-            // View2(a, b, h);
+            else
+            {
+                cout << "At first do input!!!" << endl;
+            }
             break;
 
         case '4':

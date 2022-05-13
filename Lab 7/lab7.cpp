@@ -1,5 +1,6 @@
 using namespace std;
 #include <iostream>
+#include <iomanip>
 #include <math.h>
 #include "Source1.h"
 
@@ -71,11 +72,30 @@ double Newton(double x, int n, double* arr_x, double* arr_y)
     return sum;
 }
 
+double Method_Newt(double* x, double* y, double xt, int m) {
+    int i, k = 1;
+    double N, p = 1, * d;
+    d = new double[m + 1];
+    for (i = 1; i <= m; i++) {
+        d[i] = y[i - 1];
+    }
+    N = y[0];
+    for (k - 1; k <= m - 1; k++) {
+        for (i = 1; i < m - k; i++) {
+            d[i] = (d[i] - d[i + 1]) / (x[i - 1] - x[i - 1 + k]);
+        }
+        p *= (xt - x[k - 1]);
+        N += p * d[1];
+    }
+    delete[] d;
+    return N;
+}
+
 int main()
 {
-    double a, b, h, h1, *arr_x, *arr_y, *arr_y_l, *arr_y_n, x, y;
+    double a, b, h, h1, *arr_x, *arr_y, *arr_y_l, *arr_y_n, x, y, Lagr_error = 0, Newt_error = 0, Lagr_delt, Newt_delt;
     int m, n;
-    bool input = false;
+    bool input = false, exit1 = false;
     while (true)
     {
         cout << "---------------------------" << endl;
@@ -92,15 +112,24 @@ int main()
                 b = 10;
                 m = 5;
                 n = 11;
+                cout << "Test values a = -7, b = 10, m = 5, n = 11"<< endl;
             }
             else
             {
-                cout << "Input a (pls length no more than 12): " << endl;
-                a = InputDouble("all");
+                while (true)
+                {
+                    cout << "Input a (pls length no more than 12): " << endl;
+                    a = InputDouble("all");
+                
+                    cout << "Input b (pls length no more than 12): " << endl;
+                    b = InputDouble("all");
+                    if(a != b)
+                    {
+                        break;
+                    }
+                    cout << "Error a = b..." << endl;
+                }
             
-                cout << "Input b (pls length no more than 12): " << endl;
-                b = InputDouble("all");
-               
                 if(a > b)
                 {
                     cout << "Swaping a and b..." << endl;
@@ -109,23 +138,35 @@ int main()
                     b = h;
                 }
                 
-                while (true)
+                while (!exit1)
                 {
-                    cout << "Input m: " << endl;
-                    m = InputDouble("all");
 
-                    cout << "Input n: " << endl;
-                    n = InputDouble("all");
-                    
-                    if(n > m)
+                    while(!exit1)
                     {
-                        break;
+                        cout << "Input m: " << endl;
+                        m = InputDouble(">0");
+                        if ( m >= 5)
+                        {
+                            break;
+                        }
+                        cout << "m must be >= 5" << endl;
                     }
 
-                    cout << "Bad input... n <= m \t Reinput pls" << endl;
+                    while(!exit1)
+                    {
+                        cout << "Input n: " << endl;
+                        n = InputDouble(">0");
+                        if ( n > m)
+                        {
+                            exit1 = true;
+                            break;
+                        }
+                        cout << "Bad input... n <= m \t Reinput pls" << endl;
+                    }
                 }
+                exit1 = false;
             }
-
+    
             h = (b - a) / (m - 1);
             h1 = (b - a) / (n - 1);
             break;
@@ -138,13 +179,14 @@ int main()
                 x = a;
                 cout << "\nBefore: " << endl;
                 cout << "---------------------------" << endl;
-                cout << "|x           |y           |" << endl;
+                cout << "|     x      |     y      |" << endl;
+                cout << "---------------------------" << endl;
                 for(int i = 0; i < m; i++)
                 {
                     arr_x[i] = x;
                     arr_y[i] = F(x);
                     system(("echo '" + to_string(x) + " " + to_string(arr_y[i]) + "' >> points_before").c_str());
-                    cout << "|" << str_n(x) << "|" << str_n(arr_y[i]) << "|" << endl;
+                    cout << "|" << setw(12) << x << "|" << setw(12) << arr_y[i] << "|" << endl;
                     x += h;
                 }
                 cout << "---------------------------" << endl;
@@ -154,17 +196,37 @@ int main()
                 arr_y_l = new double[n + 1];
                 arr_y_n = new double[n + 1];
                 cout << "\nAfter: " << endl;
-                cout << "----------------------------------------" << endl;
-                cout << "|x           |y - Lagr    |y - Newt    |" << endl;
+                cout << "-------------------------------------------------------------------------------" << endl;
+                cout << "|     x      |     y      |    y Lagr  |  |y - yl|  |    y Newt  |  |y - yn|  |" << endl;
+                cout << "-------------------------------------------------------------------------------" << endl;
                 for(int i = 0; i < n; i++, x += h1)
                 {   
                     arr_y_l[i] = Lagr(arr_x, x, m, arr_y);
                     arr_y_n[i] = Newton(x, m, arr_x, arr_y);
-                    cout << "|" << str_n(x) << "|" << str_n(arr_y_l[i]) << "|" << str_n(arr_y_n[i]) << "|" << endl;
+                    y = F(x);
+
+                    Lagr_delt = abs(y - arr_y_l[i]);
+                    Newt_delt = abs(y - arr_y_n[i]);
+
+                    if(Lagr_error < Lagr_delt)
+                    {
+                        Lagr_error = Lagr_delt;
+                    }
+                    if(Newt_error < Newt_delt)
+                    {
+                        Newt_error = Newt_delt;
+                    }
+
+                    cout << "|" << setw(12) << x << "|" << setw(12) << y << "|" << setw(12) << arr_y_l[i] << "|" << setw(12) << Lagr_delt << "|" << setw(12) << arr_y_n[i] << "|" << setw(12) << Newt_delt << "|" << endl;
+
                     system(("echo '" + to_string(x) + " " + to_string(arr_y_l[i]) + "' >> points_after_l").c_str());
                     system(("echo '" + to_string(x) + " " + to_string(arr_y_n[i]) + "' >> points_after_n").c_str());
                 }
-                cout << "----------------------------------------" << endl;
+                cout << "-------------------------------------------------------------------------------" << endl;
+                cout << "The error of Lagr method: " << Lagr_error << endl;
+                cout << "The error of Newt method: " << Newt_error << endl;
+
+                Lagr_error = 0, Newt_error = 0, Lagr_delt = 0, Newt_delt = 0;
                 system("echo 'plot \"points_after_l\" with lines, \"points_before\"  with lines, \"points_after_n\" ' | gnuplot --persist ");
                 system("rm 'points_after_l'");
                 system("rm 'points_after_n'");

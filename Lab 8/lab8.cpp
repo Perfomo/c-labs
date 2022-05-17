@@ -92,7 +92,7 @@ int main()
     while (true)
     {
         cout << "-----------------------" << endl;
-        cout << "1 - Input a and b\n2 - Input e\n3 - input m\n4 - Result\n5 - Exit" << endl;
+        cout << "1 - Input a and b\n2 - Input e\n3 - input m\n4 - Result\n5 - Exit"  << endl;
         switch (_getch())
         {
         case '1':
@@ -148,7 +148,7 @@ int main()
             while(!exit)
             {
                 cout << "-----------------------" << endl;
-                cout << "1 - Middles method\n2 - Simpson method\n3 - eps\n4 - all methods\n5 - exit from this menu" << endl;
+                cout << "1 - Middles method\n2 - Simpson method\n3 - Eps\n4 - All methods\n5 - Exit from this menu"<< "\n6 - Graph" << endl;
 
                 switch (_getch())
                 {
@@ -182,32 +182,32 @@ int main()
                         cout << "\nAt first input Eps: " << endl;
                         e = InputEps();
                     }
-                    cout << "\nValues:\na - " << a << "\nb - " << b << "\neps - " << e << endl;
+                    cout << "\nValues:\na - " << a << "\nb - " << b << "\neps - " << e <<  "\nme - 2" << endl;
                     cout << "\nEps Mid method: " << endl;
                     it = 1;
                     result = Eps(Mid, a, b, e, it);
-                    cout << "\nResult: " << result << endl;
-                    cout << "Eps it: " << it << endl; 
+                    cout << "Result: " << result << endl;
+                    cout << "Eps it: " << it << endl;
+                    cout << "me: " << pow(2, it) << endl; 
 
                     cout << "\nEps Simps method: " << endl;
                     it = 1;
                     result = Eps(Simps, a, b, e, it);
-                    cout << "\nResult: " << result << endl;
+                    cout << "Result: " << result << endl;
                     cout << "Eps it: " << it << endl; 
+                    cout << "me: " << pow(2, it) << endl; 
                     break;
                 
                 case '4':
                     if(m == 0)
                     {
-                        cout << "\nInput m: " << endl;
                         m = InputM();
                     }
                     if(e == 0)
                     {
-                        cout << "\nInput Eps: " << endl;
                         e = InputEps();
                     }
-                    cout << "\nValues:\na - " << a << "\nb - " << b << "\nm - " << m << "\neps - "<< e << endl;
+                    cout << "\nValues:\na - " << a << "\nb - " << b << "\nm - " << m << "\neps - "<< e << "\nme - 2" << endl;
                     cout << "\nMiddles method: " << endl;
                     result = Mid(a, b, m);
                     cout << "Result: " << result << endl;
@@ -221,12 +221,24 @@ int main()
                     result = Eps(Mid, a, b, e, it);
                     cout << "Result: " << result << endl;
                     cout << "Eps it: " << it << endl; 
+                    cout << "me: " << pow(2, it) << endl; 
 
                     cout << "\nEps Simp method: " << endl;
                     it = 1;
                     result = Eps(Simps, a, b, e, it);
-                    cout << "\nResult: " << result << endl;
-                    cout << "Eps it: " << it << endl; 
+                    cout << "Result: " << result << endl;
+                    cout << "Eps it: " << it << endl;
+                    cout << "me: " << pow(2, it) << endl; 
+
+                    break;
+
+                case '6':
+                    for(double k = a, y = (b - a) / 100; k < b; k += y)
+                    {
+                        system(("echo '" + to_string(k) + " " + to_string(F(k)) + "' >> points").c_str());
+                    }
+                    system("echo 'plot \"points\" with lines, 0' | gnuplot --persist ");
+                    system("rm 'points'");
                     break;
 
                 case '5':

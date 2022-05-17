@@ -118,10 +118,10 @@ int main()
             {
                 while (true)
                 {
-                    cout << "Input a (pls length no more than 12): " << endl;
+                    cout << "Input a: " << endl;
                     a = InputDouble("all");
                 
-                    cout << "Input b (pls length no more than 12): " << endl;
+                    cout << "Input b: " << endl;
                     b = InputDouble("all");
                     if(a != b)
                     {

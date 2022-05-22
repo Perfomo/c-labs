@@ -1,28 +1,13 @@
-// #include "Source1.h"
+#include "Source1.h"
 #include <iostream>
 
 using namespace std;
-#include <termios.h>
-#include <unistd.h>
-int _getch(void)
-{
-	struct termios oldattr, newattr;
-	int ch;
-
-	tcgetattr(STDIN_FILENO, &oldattr);
-	newattr = oldattr;
-	newattr.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
-	return ch;
-}
 
 struct Stack
 {
     int num;
     Stack* next_struck;
-}*top;
+};
 
 
 Stack* InStack(int struck_num, Stack* top)
@@ -160,21 +145,20 @@ int main()
     int x, n;
     while (!ok)
     {
-        cout << "--------------------\n1 - add \n2 - delete all\n3 - view all\n4 - find max value\n5 - exit\n" << "Input what u want to do: " << endl;
+        cout << "--------------------\n1 - Add \n2 - Delete all\n3 - View all\n4 - Del max value\n5 - Exit\n"<< endl;
         switch (_getch())
         {
             case '1':
                 cout << "How many numbers u want to add?" << endl;
-                // n = InputInt(">0");
-                cin >> n;
+                n = InputInt(">0");
                 for (int l = 0; l < n; l++)
                 {
                     cout << "Input number: " << endl;
-                    // int x = InputInt("all");
-                    cin >> x;
+                    int x = InputInt("all");
                     top = InStack(x, top);
 
                 }
+                cin.ignore();
                 break;
             
             case '2':
@@ -197,7 +181,7 @@ int main()
                 }
 
                 ViewStuck(top);
-                cout << "--" << endl;
+                cout << "\nRec view: " << endl;
                 RecView(top);
                 break;
             case '4':
@@ -206,8 +190,8 @@ int main()
                     cout << "Stack is empty!!! Add numbers..." << endl;
                     break;
                 }
-                // top = N13_2(top);
                 top = Del_Max(top);
+                cout << "Deleted" << endl;
                 break;
 
             case '5':
@@ -223,58 +207,3 @@ int main()
         }
     }
 }
-
-/*
-int N13(Stack* top, int n)
-{
-    Stack* t = top, **p = &top, *k = top -> next_struck;
-    int max_value = top -> num, ammount = n;
-    for (int i = 1; i < n; i++)
-    {
-        top = top -> next_struck;
-        if (top -> num > max_value)
-        {
-            max_value = top -> num;
-        }
-    }
-    top = t;
-    for (int i = 0; i < n; i++)
-    {
-        
-        if (top -> num == max_value)
-        {   
-            p = &top;
-            delete *p;
-            ammount--;
-            
-            top = k;
-            
-            t -> next_struck = top;
-            if (i == n-1)
-            {
-                return ammount;
-            }
-            if (i != n-2)
-            {
-                k = k -> next_struck;
-            }
-            n--;
-        }
-        top = top -> next_struck;
-        if (k)
-        {
-            k = k -> next_struck;
-        }
-        if (i!=0)
-        {
-            t = t -> next_struck;
-        }
-    }
-    cout << max_value << endl;
-
-    return ammount;
-}
-// p = &top;
-// l = *p;
-// delete l;
-*/

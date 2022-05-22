@@ -208,7 +208,7 @@ int main()
     Stack *top = nullptr, *end = nullptr;
     while (!ok)
     {
-        cout << "------------\n" <<"What u want to do?\n1 - Add\n2 - Del\n3 - View\n4 - Del max\n5 - Exit\n------------" << endl;
+        cout << "------------\n" << "1 - Add\n2 - Del\n3 - View\n4 - Del max\n5 - Exit\n------------" << endl;
         switch (_getch())
         {
             case '1':
@@ -299,6 +299,7 @@ int main()
                 else 
                 {
                     top = Del_Max(top, *&end);
+                    cout << "Deleted" << endl;
                 }
                 break;
 

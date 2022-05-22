@@ -38,18 +38,30 @@ int main()
 {
     double x;
     int n;
+    while(true)
+    {
+        cout << "----------------------------" << endl;
+        cout << "1 - Input\nElse - exit" << endl;
+        if(_getch() == '1')
+        {
+            cout << "\nInput x: " << endl;
+            x = InputDouble("all");
 
-    cout << "Input x: " << endl;
-    x = InputDouble("all");
+            cout << "\nInput n: " << endl;
+            n = InputInt(">0");
 
-    cout << "Input n: " << endl;
-    n = InputInt(">0");
+            cout << "\nNormal loop: " << endl;
+            cout <<  NormFunc(x, n) << endl;
 
-    cout << "Normal loop: " << endl;
-    cout <<  NormFunc(x, n) << endl;
-
-    cout << "Recursive result: " << endl;
-    cout << RecFunc(x, n) << endl;
-
-    return 1;
+            cout << "\nRecursive result: " << endl;
+            cout << RecFunc(x, n) << endl;
+            cin.ignore();
+        }
+        else
+        {
+            break;
+        }
+    }
+    cout << "\nHave a nice day!!!" << endl;
+    return 0;
 }

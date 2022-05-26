@@ -491,8 +491,7 @@ int main()
 {
     double res;
     string str = "", polish = "";
-    bool exit = false;
-    while (!exit)
+    while (true)
     {
         cout << "-----------------------------" << endl;
         cout << "1 - New string\n2 - Polish view\n3 - View result\n4 - Exit" << endl;
@@ -539,14 +538,13 @@ int main()
             break;
 
         case '4':
-            exit = true;
             cout << "Have a nice day!!!" << endl;
-            break;
+            return 0;
 
         default:
             cout << "Bad input..." << endl;
             break;
         }
     }
-    return 0;
+    return 1;
 }

@@ -271,7 +271,24 @@ void View(Stack **table, string rool)
     cout << "-------\n" << endl;
 }
 
-using namespace std;
+void Test(int amount, Stack **table)
+{
+    string str_n = "", hstr;
+    int  arr_pos = -1, col = 0, i = 0;
+
+    while(i < amount)
+    {
+        str_n = to_string(i);
+        hstr = Hash(str_n, arr_pos);
+        arr_pos = Add(str_n, hstr, arr_pos, table);
+        if(arr_pos == -1)
+        {
+            col++;
+        }
+        i++;
+    }
+    cout << "\nCollisions: " << col << endl;
+}
 
 int main()
 {
@@ -326,7 +343,7 @@ int main()
                 hstr = Find_by_info(str, table, arr_pos, stack_pos);
                 if(hstr != "")
                 {
-                    cout << "Ur hash word is " << hstr << "\narr position: " << arr_pos << "\nstack position: " << stack_pos << endl;
+                    cout << "\nUr hash word is " << hstr << "\narr position: " << arr_pos << "\nstack position: " << stack_pos << endl;
                 }
             }
             cin.ignore();
@@ -354,15 +371,16 @@ int main()
         case '4':
             if(!ok)
             {
-                cout << "Input at first..." << endl;
+                cout << "\nInput at first..." << endl;
                 break;
             }
-            cout << "All info will be deleted!!!\n1 - ok\nelse - no" << endl;
+            cout << "\nAll info will be deleted!!!\n\n1 - ok\nelse - no" << endl;
             if(_getch() == '1')
             {
                 Clear(table);
                 cout << "\nDeleted..." << endl;
                 table = Create_arr();
+                ok = false;
             }
             break;
 
@@ -372,7 +390,15 @@ int main()
             return 0;
 
         case '6':
-
+            cout << "\nHow many it? " << endl;
+            cin >> arr_pos;
+            cin.ignore();
+            Test(arr_pos, table);
+            arr_pos = -1;
+            Clear(table);
+            cout << "\nDeleted..." << endl;
+            table = Create_arr();
+            ok = false;
             break;
 
         default:

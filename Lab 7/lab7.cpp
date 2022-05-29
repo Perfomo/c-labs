@@ -72,24 +72,6 @@ double Newton(double x, int n, double* arr_x, double* arr_y)
     return sum;
 }
 
-double Method_Newt(double* x, double* y, double xt, int m) {
-    int i, k = 1;
-    double N, p = 1, * d;
-    d = new double[m + 1];
-    for (i = 1; i <= m; i++) {
-        d[i] = y[i - 1];
-    }
-    N = y[0];
-    for (k - 1; k <= m - 1; k++) {
-        for (i = 1; i < m - k; i++) {
-            d[i] = (d[i] - d[i + 1]) / (x[i - 1] - x[i - 1 + k]);
-        }
-        p *= (xt - x[k - 1]);
-        N += p * d[1];
-    }
-    delete[] d;
-    return N;
-}
 
 int main()
 {
@@ -104,35 +86,34 @@ int main()
         {
         case '1':
             input = true;
-            cout << "---------------------------" << endl;
-            cout << "1 - Test\nelse - Your input" << endl;
+            cout << "\n1 - Test\nelse - Your input" << endl;
             if(_getch() == '1')
             {
                 a = -7;
                 b = 10;
                 m = 5;
                 n = 11;
-                cout << "Test values a = -7, b = 10, m = 5, n = 11"<< endl;
+                cout << "\nTest values a = -7, b = 10, m = 5, n = 11"<< endl;
             }
             else
             {
                 while (true)
                 {
-                    cout << "Input a: " << endl;
+                    cout << "\nInput a: " << endl;
                     a = InputDouble("all");
                 
-                    cout << "Input b: " << endl;
+                    cout << "\nInput b: " << endl;
                     b = InputDouble("all");
                     if(a != b)
                     {
                         break;
                     }
-                    cout << "Error a = b..." << endl;
+                    cout << "\nError a = b..." << endl;
                 }
             
                 if(a > b)
                 {
-                    cout << "Swaping a and b..." << endl;
+                    cout << "\nSwaping a and b..." << endl;
                     h = a;
                     a = b;
                     b = h;
@@ -143,25 +124,25 @@ int main()
 
                     while(!exit1)
                     {
-                        cout << "Input m: " << endl;
+                        cout << "\nInput m: " << endl;
                         m = InputDouble(">0");
                         if ( m >= 5)
                         {
                             break;
                         }
-                        cout << "m must be >= 5" << endl;
+                        cout << "\nm must be >= 5" << endl;
                     }
 
                     while(!exit1)
                     {
-                        cout << "Input n: " << endl;
+                        cout << "\nInput n: " << endl;
                         n = InputDouble(">0");
                         if ( n > m)
                         {
                             exit1 = true;
                             break;
                         }
-                        cout << "Bad input... n <= m \t Reinput pls" << endl;
+                        cout << "\nBad input... n <= m \t Reinput pls" << endl;
                     }
                 }
                 exit1 = false;
@@ -223,8 +204,8 @@ int main()
                     system(("echo '" + to_string(x) + " " + to_string(arr_y_n[i]) + "' >> points_after_n").c_str());
                 }
                 cout << "-------------------------------------------------------------------------------" << endl;
-                cout << "The error of Lagr method: " << Lagr_error << endl;
-                cout << "The error of Newt method: " << Newt_error << endl;
+                cout << "\nThe error of Lagr method: " << Lagr_error << endl;
+                cout << "\nThe error of Newt method: " << Newt_error << endl;
 
                 Lagr_error = 0, Newt_error = 0, Lagr_delt = 0, Newt_delt = 0;
                 system("echo 'plot \"points_after_l\" with lines, \"points_before\"  with lines, \"points_after_n\" ' | gnuplot --persist ");
@@ -238,18 +219,41 @@ int main()
             }
             else
             {
-                cout << "Input at first!!!" << endl;
+                cout << "\nInput at first!!!" << endl;
             }
             break;
 
         case '3':
-            cout << "Have a nice day!" << endl;
+            cout << "\nHave a nice day!" << endl;
             return 0;
 
         default:
-            cout << "Error, bad input!" << endl;
+            cout << "\nError, bad input!" << endl;
             break;
         }
     }
     return 1;
 }
+
+
+
+
+
+// double Method_Newt(double* x, double* y, double xt, int m) {
+//     int i, k = 1;
+//     double N, p = 1, * d;
+//     d = new double[m + 1];
+//     for (i = 1; i <= m; i++) {
+//         d[i] = y[i - 1];
+//     }
+//     N = y[0];
+//     for (k - 1; k <= m - 1; k++) {
+//         for (i = 1; i < m - k; i++) {
+//             d[i] = (d[i] - d[i + 1]) / (x[i - 1] - x[i - 1 + k]);
+//         }
+//         p *= (xt - x[k - 1]);
+//         N += p * d[1];
+//     }
+//     delete[] d;
+//     return N;
+// }

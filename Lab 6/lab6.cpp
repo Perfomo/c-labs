@@ -3,9 +3,6 @@
 using namespace std;
 #include "Source1.h"
 
-#include <termios.h>
-#include <unistd.h>
-
 // Sin^2(x) - 3Cos(X);
 double F(double x)
 {
@@ -20,7 +17,6 @@ double FindKeyCekLine(double x0, double h, double e, int &it)
     yd = F(x0 - h);
     do
     {
-        // cout << '*' << endl;
         it++;
         x1 = x0 - y0 * h / (y0 - yd);
         de = fabs(x0 - x1);
@@ -37,7 +33,6 @@ double Fun_Del_2(double x0, double x1, double e, int &it)
     y0 = F(x0);
     do
     {
-        // cout << '*' << endl;
         it++;
         x2 = (x0 + x1) / 2;
         y2 = F(x2);
@@ -69,7 +64,7 @@ int main()
         {
         case '1':
             input = true;
-            cout << "1 - Test\nelse - Ur input" << endl;
+            cout << "\n1 - Test\nelse - Ur input" << endl;
             if (_getch() == '1')
             {
                 a = -7;
@@ -83,13 +78,13 @@ int main()
             {
                 while (!exit)
                 {
-                    cout << "Input a: " << endl;
+                    cout << "\nInput a: " << endl;
                     a = InputDouble("all");
-                    cout << "Input b: " << endl;
+                    cout << "\nInput b: " << endl;
                     b = InputDouble("all");
                     if (a == b)
                     {
-                        cout << "Error: a = b\t reinput a and b..." << endl;
+                        cout << "\nError: a = b\t reinput a and b..." << endl;
                     }
                     else
                     {
@@ -102,47 +97,61 @@ int main()
                     h = a;
                     a = b;
                     b = h;
+                    cout << "\nSwaping a and b..." << endl;
                 }
-                while (true)
+                while(true)
                 {
-                    cout << "Input step: " << endl;
-                    h = InputDouble("all");
-                    h = fabs(h);
-                    if (h < (b - a) / 100)
+                    while (true)
                     {
-                        break;
-                    }
-                    cout << "h is too big or too small\n";
-                }
-                while (true)
-                {
-
-                    cout << "Input e : " << endl;
-                    e = InputDouble(">0");
-                    if (e == 0)
-                    {
-                        cout << "bad e..." << endl;
-                    }
-                    else
-                    {
-                        if (e < 0.1 && h / 10)
+                        cout << "\nInput step: " << endl;
+                        h = InputDouble("all");
+                        if(h < 0)
+                        {
+                            h = fabs(h);
+                            cout << "step = |step|" << endl;
+                        }
+                        if (h < 0.001 and h > 0.00001)
                         {
                             break;
                         }
-                        cout << "e is too big or too small\n";
+                        cout << "\nstep is too big (step > 0.001) or too small (step < 0.00001)";
                     }
+                    while (true)
+                    {
+
+                        cout << "\nInput e: " << endl;
+                        e = InputDouble(">0");
+                        if (e == 0)
+                        {
+                            cout << "\nbad e..." << endl;
+                        }
+                        else
+                        {
+                            if (e < 0.001 and e > 0.00001)
+                            {
+                                break;
+                            }
+                            cout << "\ne is too big (e > 0.001) or too small (e < 0.00001)";
+                        }
+                    }
+                    if(e < h)
+                    {
+                        break;
+                    }
+                    cout << "e must be <h" << endl;
                 }
+                
             }
             break;
 
         case '2':
             if (!input)
             {
-                cout << "At first do input!!!" << endl;
+                cout << "\nAt first do input!!!" << endl;
             }
             else
             {
-                cout << "Method 1:\nRoots:" << endl;
+                cout << "\nMethod 1:\nRoots:" << endl;
                 it = 0;
                 for (double k = a; k < b; k += h)
                 {
@@ -153,7 +162,7 @@ int main()
                 }
                 cout << "It: " << it << endl;
                 it = 0;
-                cout << "Method 2:\nRoots:" << endl;
+                cout << "\nMethod 2:\nRoots:" << endl;
                 for (double k = a; k < b; k += h)
                 {
                     if (F(k) * F(k + h) < 0)
@@ -174,149 +183,21 @@ int main()
                 }
                 system("echo 'plot \"points\" with lines, 0' | gnuplot --persist ");
                 system("rm 'points'");
-                // View1(a, b, h);
-                // cout << "-------------------------------------------------------------------------------------------" << endl;
-                // View2(a, b, h);
             }
             else
             {
-                cout << "At first do input!!!" << endl;
+                cout << "\nAt first do input!!!" << endl;
             }
             break;
 
         case '4':
-            cout << "Have a nice day!!!" << endl;
+            cout << "\nHave a nice day!!!" << endl;
             return 0;
 
         default:
-            cout << "Bad input..." << endl;
+            cout << "\nBad input..." << endl;
             break;
         }
     }
     return 0;
 }
-
-
-// void View2(double a, double b, double h)
-// {
-//     int height = 30, width = 120;
-//     double max, min, delt_y, per_y = (b - a) / height, per_x = (b - a) / width, buf, y;
-
-//     double *x_val = new double[width];
-//     int i = 0;
-
-//     for (double k = a; k < b; k += per_y, i++)
-//     {
-//         buf = F(k);
-//         if (buf > max)
-//         {
-//             max = buf;
-//         }
-//         if (buf < min)
-//         {
-//             min = buf;
-//         }
-//     }
-//     i = 0;
-//     for (double k = a; k < b; k += per_x, i++)
-//     {
-//         x_val[i] = F(k);
-//     }
-//     y = max;
-//     min -= per_y;
-//     do
-//     {
-//         if (y > -1 * per_y and y < per_y)
-//         {
-//             cout << 0;
-//         }
-//         else
-//         {
-//             cout << " ";
-//         }
-//         for (int i = 0, k = 0; i < width; i++, k++)
-//         {
-//             if (k >= width)
-//             {
-//                 k = 0;
-//             }
-//             if (x_val[k] > y - per_y / 2 && x_val[k] < y + per_y / 2)
-//             {
-//                 cout << "*";
-//             }
-//             else
-//             {
-//                 cout << " ";
-//             }
-//         }
-//         y -= per_y;
-//         cout << "|" << endl;
-//     } while (y >= min);
-//     delete[] x_val;
-// }
-
-// void View1(double a, double b, double h)
-// {
-//     int height = 30, width = 120, n = 0;
-//     double max, min, per_y = (b - a) / height, per_x = (b - a) / width, buf, y;
-
-//     double *x_val = new double[width], delt_m, per_m;
-//     int i = 0;
-
-//     // cout << per_y << "  " << per_x << endl;
-
-//     for (double k = a; k < b; k += per_y, i++)
-//     {
-//         // cout << i << endl;
-//         buf = F(k);
-
-//         if (buf > max)
-//         {
-//             max = buf;
-//         }
-//         if (buf < min)
-//         {
-//             min = buf;
-//         }
-//     }
-//     delt_m = max - min;
-//     per_m = delt_m / height;
-//     i = 0;
-//     for (double k = a; k < b; k += per_x, i++)
-//     {
-//         x_val[i] = F(k);
-//     }
-//     n = 0;
-//     y = max;
-//     while (a < b)
-//     {
-//         if (y > -1 * per_y and y < per_y)
-//         {
-//             cout << 0;
-//         }
-//         else
-//         {
-//             cout << " ";
-//         }
-//         for (int i = 0, k = 0; i < width; i++, k++)
-//         {
-//             if (k >= width)
-//             {
-//                 k = 0;
-//             }
-//             if (x_val[k] > y - per_y / 2 and x_val[k] < y + per_y / 2)
-//             {
-//                 cout << "*";
-//             }
-//             else
-//             {
-//                 cout << " ";
-//             }
-//         }
-//         a += per_y;
-//         y -= per_m;
-//         n++;
-//         cout << "|" << endl;
-//     }
-//     delete[] x_val;
-// }

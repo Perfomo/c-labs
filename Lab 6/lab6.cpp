@@ -160,6 +160,10 @@ int main()
                         cout << FindKeyCekLine(k, h, e, it) << endl;
                     }
                 }
+                if(it == 0)
+                {
+                    cout << "no roots here..." << endl;
+                }
                 cout << "It: " << it << endl;
                 it = 0;
                 cout << "\nMethod 2:\nRoots:" << endl;
@@ -169,6 +173,10 @@ int main()
                     {
                         cout << Fun_Del_2(k, k + h, e, it) << endl;
                     }
+                }
+                if(it == 0)
+                {
+                    cout << "no roots here..." << endl;
                 }
                 cout << "It: " << it << endl;
             }

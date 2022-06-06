@@ -142,7 +142,7 @@ int main()
                             exit1 = true;
                             break;
                         }
-                        cout << "\nBad input... n <= m \t Reinput pls" << endl;
+                        cout << "\nBad input...  \tn must be > m \t Reinput pls" << endl;
                     }
                 }
                 exit1 = false;
@@ -155,8 +155,8 @@ int main()
         case '2':
             if(input)
             {
-                arr_x = new double[m + 1];
-                arr_y = new double[m + 1];
+                arr_x = new double[m];
+                arr_y = new double[m];
                 x = a;
                 cout << "\nBefore: " << endl;
                 cout << "---------------------------" << endl;
@@ -174,8 +174,8 @@ int main()
                 cout << endl;
 
                 x = a;
-                arr_y_l = new double[n + 1];
-                arr_y_n = new double[n + 1];
+                arr_y_l = new double[n];
+                arr_y_n = new double[n];
                 cout << "\nAfter: " << endl;
                 cout << "-------------------------------------------------------------------------------" << endl;
                 cout << "|     x      |     y      |    y Lagr  |  |y - yl|  |    y Newt  |  |y - yn|  |" << endl;

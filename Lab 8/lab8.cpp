@@ -10,15 +10,25 @@ double F(double x)
     return pow(sin(x),2) - 3 * cos(x);
 }
 
+// double Mid2(double a, double b, int m)
+// {
+//     double result = 0, h = (b - a) / m;
+  
+//     for(int i = 0; i < m; i++)
+//     {
+//         result += F(a + h * (i + 0.5));
+//     }
+//     return result * h;
+// }
+
 double Mid(double a, double b, int m)
 {
-    double result = 0, h = (b - a) / m;
-  
-    for(int i = 0; i < m; i++)
+    double res = 0, h = (b - a) / m;
+    for(a += (h / 2); b > a; a += h)
     {
-        result += F(a + h * (i + 0.5));
+        res += F(a);
     }
-    return result * h;
+    return res * h;
 }
 
 double Simps (double a, double b, int m)
@@ -58,11 +68,11 @@ int InputM()
     {
         cout << "\nInput m: " << endl;
         m = InputInt("all");
-        if (m >= 20)
+        if (m >= 20 and m < 1000)
         {
             break;
         }
-        cout << "m must be more than 20..." << endl;
+        cout << "m must be more than 20 and less than 1000..." << endl;
     }
     cin.ignore();
     return m;
@@ -237,12 +247,14 @@ int main()
                     {
                         system(("echo '" + to_string(k) + " " + to_string(F(k)) + "' >> points").c_str());
                     }
+                    cout << "\nDrawing... " << endl;
                     system("echo 'plot \"points\" with lines, 0' | gnuplot --persist ");
                     system("rm 'points'");
                     break;
 
                 case '5':
                     exit = true;
+                    cout << "\nLeaving..." << endl;
                     break;
 
                 default:

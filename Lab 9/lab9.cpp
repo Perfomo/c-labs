@@ -1,22 +1,6 @@
 #include <iostream>
-//#include "Source1.h"
+#include "Source1.h"
 using namespace std;
-
-#include <termios.h>
-#include <unistd.h>
-int _getch(void)
-{
-	struct termios oldattr, newattr;
-	int ch;
-
-	tcgetattr(STDIN_FILENO, &oldattr);
-	newattr = oldattr;
-	newattr.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
-	return ch;
-}
 
 string InputStr(string message)
 {
@@ -48,17 +32,16 @@ string InputStr(string message)
         }
     }
 }
-
 string FuncRec(uint32_t x, string x5)
 {
-    int y =16;
+    int y = 16;
     int ost = x % y;
-    string Lang = "ABCDIFGHIJKLMNOPQRSTUVWXYZ";
+    string Lang = "ABCDEF";
     if( x < y )
     {   
-         if ( ost >= 10)
+        if ( ost >= 10)
         {
-            for (int i = 10; i < 27; i++)
+            for (int i = 10; i < 16; i++)
             {
                 if ( i == ost )
                 {
@@ -73,7 +56,7 @@ string FuncRec(uint32_t x, string x5)
     {
         if ( ost >= 10)
         {
-            for (int i = 10; i < 27; i++)
+            for (int i = 10; i < 16; i++)
             {
                 if ( i == ost )
                 {
@@ -93,13 +76,13 @@ struct Stack
     Stack *next; 
 };
 
-string Hash(string str, int &arr_pos)
+string Hash(string str, int &arr_pos, int size)
 {
-    const int hstr_size = 8;
     const int str_size = str.length();
 
     string res = "";
-    uint32_t h = 3323198485ul;
+    int res_len;
+    uint32_t h = 3323198485;
 
     for (int i = 0;i < str_size; i++)
     {
@@ -107,24 +90,32 @@ string Hash(string str, int &arr_pos)
         h *= 0x5bd1e995;
         h ^= h >> 15;
     }
-    arr_pos = h % 8;
-    return FuncRec(h, res);
+    arr_pos = h % size;
+    res = FuncRec(h, res);
+    res_len = res.length();
+    while (res_len < 8)
+    {
+        res = "0" + res;
+        res_len++;
+    }
+    return res;
 }
 
-Stack** Create_arr()
+Stack** Create_arr(int size)
 {
-    Stack **table = new Stack*[8];
-    for(int i = 0; i < 8; i++)
+    Stack **table = new Stack*[size];
+    for(int i = 0; i < size; i++)
     {
         table[i] = nullptr;
     }
     return table;
 }
 
-string Find_by_info(string str, Stack** table, int &arr_pos, int &stack_pos)
+string Find_by_info(string str, Stack** table, int &arr_pos, int &stack_pos, int size)
 {
     stack_pos = 0;
-    string hstr = Hash(str, arr_pos);
+    cout << size << endl;
+    string hstr = Hash(str, arr_pos, size);
     Stack *now = table[arr_pos];
     if(now)
     {
@@ -133,7 +124,7 @@ string Find_by_info(string str, Stack** table, int &arr_pos, int &stack_pos)
     }
     else
     {
-         cout << "\n404 not found..." << endl;
+        cout << "\n404 not found..." << endl;
         return "";
     }
     while (now)
@@ -149,11 +140,11 @@ string Find_by_info(string str, Stack** table, int &arr_pos, int &stack_pos)
     return "";
 }
 
-string Find_by_pos(int arr_pos, int stack_pos, Stack** table)
+string Find_by_pos(int arr_pos, int stack_pos, Stack** table, int size)
 {
-    if(arr_pos < 0 or arr_pos > 8)
+    if(arr_pos < 0 or arr_pos > size)
     {
-        cout << "\nError... Bad arr position... must be [0,8]" << endl;
+        cout << "\nError... Bad arr position... must be [0," << size - 1 << "]" << endl;
         return "";
     }
     Stack *now = table[arr_pos];
@@ -172,11 +163,11 @@ string Find_by_pos(int arr_pos, int stack_pos, Stack** table)
 }
 
 
-void Clear(Stack**& table)
+void Clear(Stack**& table, int size)
 {
 
     Stack *now, *prev;
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < size; i++)
     {
         if(table[i])
         {
@@ -224,7 +215,7 @@ int Add(string str, string hstr, int arr_pos,  Stack **table)
     {
         if(prev -> info == hstr)
         {
-            cout << "\nCan't add this info... This word already in table or just collision :(" << endl;
+            cout << "\nCan't add this " << str << "->" << hstr << "\tThis word already in table or just collision :(" << endl;
             return -1;
         }
         Stack* add = new Stack;
@@ -236,11 +227,11 @@ int Add(string str, string hstr, int arr_pos,  Stack **table)
     return stack_pos;
 }
 
-void View(Stack **table, string rool)
+void View(Stack **table, string rool, int size)
 {
     Stack *now;
     cout << "\n-------" << endl;
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < size; i++)
     {
         now = table[i];
         if(!now)
@@ -271,15 +262,15 @@ void View(Stack **table, string rool)
     cout << "-------\n" << endl;
 }
 
-void Test(int amount, Stack **table)
+void Test(int amount, Stack **table, int size)
 {
     string str_n = "", hstr;
     int  arr_pos = -1, col = 0, i = 0;
-
+    cout << size <<endl;
     while(i < amount)
     {
         str_n = to_string(i);
-        hstr = Hash(str_n, arr_pos);
+        hstr = Hash(str_n, arr_pos, size);
         arr_pos = Add(str_n, hstr, arr_pos, table);
         if(arr_pos == -1)
         {
@@ -290,32 +281,79 @@ void Test(int amount, Stack **table)
     cout << "\nCollisions: " << col << endl;
 }
 
+int InputSize()
+{
+    int size;
+    while (true)
+    {
+        cout << "\nInput size of table: " <<endl;
+        size = InputInt("all");
+        if (size >= 5 and size <= 25)
+        {
+            break;
+        }
+        cout <<"\nsize must be bigger than 4 and less than 26 " << endl;
+    }
+    cin.ignore();
+    return size;
+}
+
+int InputMax()
+{
+    int max;
+    while (true)
+    {
+        cout << "\nInput max amount of words:" << endl;
+        max = InputInt("all");
+        if(max >= 10 and max <= 200)
+        {
+            break;
+        }
+        cout << "\nmax amount of words must be bigger than 9 and less than 201" << endl;
+    }
+    cin.ignore();
+    return max;
+}
+
 int main()
 {
-    const int tabl_height = 8;
-
-    Stack **table = Create_arr();
+    char ch;
     string str, hstr;
     bool ok  = false;
-    int arr_pos = -1, stack_pos = -1; 
+    int arr_pos = -1, stack_pos = -1, size, max, max_now = 0, new_max; 
+
+    size = InputSize();
+
+    max = InputMax();
+    
+    Stack **table = Create_arr(size);
+
     while (true)
     {
         cout << "-------------------------------" << endl;
-        cout << "1 - Input\n2 - Find info\n3 - View tabl\n4 - Clear table\n5 - Exit\n6 - Test" << endl;
+        cout << "1 - Input\n2 - Find info\n3 - View tabl\n4 - Clear table\n5 - Exit\n6 - Test\n7 - new size and max words\n8 - new max words" << endl;
         switch (_getch())
         {
         case '1':
-            str = InputStr("\nInput ur string: ");
-            cin.ignore();
-            hstr = Hash(str, arr_pos);
-            stack_pos = Add(str, hstr, arr_pos, table);
-            if(stack_pos != -1)
+            if(max > max_now)
             {
-                cout << "\nUr string ( " << str << " ) -> ( " << hstr << " ). " << "\nPosition in array = " << arr_pos << "\nPosition on stack = " << stack_pos << "\n" << endl;
+                str = InputStr("\nInput ur string: ");
+                cin.ignore();
+                hstr = Hash(str, arr_pos, size);
+                stack_pos = Add(str, hstr, arr_pos, table);
+                if(stack_pos != -1)
+                {
+                    max_now++;
+                    cout << "\nUr string ( " << str << " ) -> ( " << hstr << " ). " << "\nPosition in array = " << arr_pos << "\nPosition on stack = " << stack_pos << "\n" << endl;
+                }
+                arr_pos = -1;
+                stack_pos = -1;
+                ok = true;
             }
-            arr_pos = -1;
-            stack_pos = -1;
-            ok = true;
+            else
+            {
+                cout << "\nMax amount of words: " << max << "\nUr amount of words now: " << max_now << endl;
+            }
             break;
         
         case '2':
@@ -331,7 +369,7 @@ int main()
                 cin >> arr_pos;
                 cout << "\nInput stack position:" << endl;
                 cin >> stack_pos;
-                hstr =  Find_by_pos(arr_pos, stack_pos, table);
+                hstr =  Find_by_pos(arr_pos, stack_pos, table, size);
                 if(hstr != "")
                 {
                     cout << "\nUr hash word is " << hstr << endl;
@@ -340,7 +378,7 @@ int main()
             else
             {
                 str = InputStr("\nInput info: ");
-                hstr = Find_by_info(str, table, arr_pos, stack_pos);
+                hstr = Find_by_info(str, table, arr_pos, stack_pos, size);
                 if(hstr != "")
                 {
                     cout << "\nUr hash word is " << hstr << "\narr position: " << arr_pos << "\nstack position: " << stack_pos << endl;
@@ -354,16 +392,19 @@ int main()
             switch (_getch())
             {
             case '1':
-                View(table, "");
+                View(table, "", size);
+                cout << "\nMax amount of words: " << max << "\nUr amount of words now: " << max_now << endl;
                 break;
             
             case '2':
-                View(table, "hash");
+                View(table, "hash", size);
+                cout << "\nMax amount of words: " << max << "\nUr amount of words now: " << max_now << endl;
                 break;
             
             default:
-                View(table, "");
-                View(table, "hash");
+                View(table, "", size);
+                View(table, "hash", size);
+                cout << "\nMax amount of words: " << max << "\nUr amount of words now: " << max_now << endl;
                 break;
             }
             break;
@@ -377,30 +418,87 @@ int main()
             cout << "\nAll info will be deleted!!!\n\n1 - ok\nelse - no" << endl;
             if(_getch() == '1')
             {
-                Clear(table);
+                Clear(table, size);
                 cout << "\nDeleted..." << endl;
-                table = Create_arr();
+                table = Create_arr(size);
                 ok = false;
+                max_now = 0;
             }
             break;
 
         case '5':
             cout << "\nHave a nice day!!!" << endl;
-            Clear(table);
+            Clear(table, size);
             return 0;
 
         case '6':
+            if(ok)
+            {
+                cout << "\nAll info will be deleted!!!\n\n1 - ok\nelse - no" << endl;
+                if(_getch() == '1')
+                {
+                    Clear(table, size);
+                    cout << "\nDeleted..." << endl;
+                    table = Create_arr(size);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            
             cout << "\nHow many it? " << endl;
-            cin >> arr_pos;
+            arr_pos = InputInt(">0");
             cin.ignore();
-            Test(arr_pos, table);
-            arr_pos = -1;
-            Clear(table);
-            cout << "\nDeleted..." << endl;
-            table = Create_arr();
+
+            max_now = arr_pos;
+            Test(arr_pos, table, size);
+            ok = true;
+            
+            break;
+        
+        case '7':
+            if(ok)
+            {
+                cout << "\nAll info will be deleted!!!\n\n1 - ok\nelse - no" << endl;
+                if(_getch() == '1')
+                {
+                    Clear(table, size);
+                    cout << "\nDeleted..." << endl;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            size = InputSize();
+
+            max = InputMax();
+
+            table = Create_arr(size);
+            max_now = 0;
             ok = false;
             break;
-
+        
+        case '8':
+            if(max == 200)
+            {
+                cout << "U can't create max bigger...\nUr max is 200" << endl;
+                cout << "U can create new table only...\tpress (7)" << endl; 
+                break;
+            }
+            while (true)
+            {
+                new_max = InputMax();
+                if(new_max > max)
+                {
+                    max = new_max;
+                    break;
+                }
+                cout << "\nNew max must be bigger than old" << endl;
+            }
+            break;
+            
         default:
             cout << "\nBad input..." << endl;
             break;
